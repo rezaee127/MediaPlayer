@@ -175,12 +175,12 @@ class MainActivity : AppCompatActivity() {
     private fun stopPlaying() {
         player?.release()
         player = null
+        mStartPlaying = !mStartPlaying
     }
 
     private fun startRecord() {
         onRecord(mStartRecording)
         mStartRecording = !mStartRecording
-
     }
 
 
@@ -213,6 +213,7 @@ class MainActivity : AppCompatActivity() {
             release()
         }
         recorder = null
+        mStartRecording = !mStartRecording
     }
 
 }
