@@ -8,6 +8,7 @@ import com.example.mediaplayer.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
     lateinit var binding:ActivityMainBinding
+     var  mediaPlayer: MediaPlayer?=null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -17,7 +18,7 @@ class MainActivity : AppCompatActivity() {
         binding.buttonPlay.setOnClickListener {
 
             val url = "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" // your URL here
-            val mediaPlayer = MediaPlayer().apply {
+             mediaPlayer = MediaPlayer().apply {
                 setAudioAttributes(
                     AudioAttributes.Builder()
                         .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
@@ -30,7 +31,10 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-
+        binding.buttonStop.setOnClickListener {
+            mediaPlayer?.release()
+            mediaPlayer = null
+        }
 
     }
 }
