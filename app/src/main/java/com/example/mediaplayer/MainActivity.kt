@@ -36,5 +36,9 @@ class MainActivity : AppCompatActivity() {
             mediaPlayer = null
         }
 
+        binding.buttonPause.setOnClickListener {
+            mediaPlayer?.pause()
+        }
+
     }
 }
