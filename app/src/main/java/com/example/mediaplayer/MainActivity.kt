@@ -1,7 +1,6 @@
 package com.example.mediaplayer
 
 import android.Manifest
-import android.content.Context
 import android.content.pm.PackageManager
 import android.media.AudioAttributes
 import android.media.MediaPlayer
@@ -10,16 +9,11 @@ import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import android.view.ViewGroup
-import android.widget.Button
-import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.example.mediaplayer.databinding.ActivityMainBinding
-import com.google.android.material.snackbar.Snackbar
 import java.io.IOException
 
 private const val LOG_TAG = "AudioRecordTest"
@@ -54,19 +48,7 @@ class MainActivity : AppCompatActivity() {
                 ).show()
             }
         }
-//    override fun onRequestPermissionsResult(
-//        requestCode: Int,
-//        permissions: Array<String>,
-//        grantResults: IntArray
-//    ) {
-//        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-//        permissionToRecordAccepted = if (requestCode == REQUEST_RECORD_AUDIO_PERMISSION) {
-//            grantResults[0] == PackageManager.PERMISSION_GRANTED
-//        } else {
-//            false
-//        }
-//        if (!permissionToRecordAccepted) finish()
-//    }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -79,38 +61,8 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    private fun requestPermissions() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            when {
-                //if user already granted the permission
-                ContextCompat.checkSelfPermission(
-                    this,
-                    Manifest.permission.RECORD_AUDIO
-                ) == PackageManager.PERMISSION_GRANTED -> {
-                    Toast.makeText(
-                        this,
-                        "you have already granted this permission",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
-                //if user already denied the permission once
-                ActivityCompat.shouldShowRequestPermissionRationale(
-                    this,
-                    Manifest.permission.RECORD_AUDIO
-                ) -> {
-                }
-                else -> {
-                    requestPermissionLauncher.launch(
-                        Manifest.permission.RECORD_AUDIO
-                    )
-                }
-            }
-        }
-    }
-
     private fun initViews() {
         binding.buttonPlay.setOnClickListener {
-
             val url = getString(R.string.music1)// your URL here
             mediaPlayer = MediaPlayer().apply {
                 setAudioAttributes(
@@ -144,13 +96,23 @@ class MainActivity : AppCompatActivity() {
         binding.buttonStartRecord.setOnClickListener {
             startRecord()
         }
-        binding.buttonStopRecord.setOnClickListener {
+        binding.buttonPlayRecorded.setOnClickListener {
             startPlay()
         }
     }
 
+
+
+
+
+
+
     private fun startPlay() {
         onPlay(mStartPlaying)
+        binding.buttonPlayRecorded.text = when (mStartPlaying) {
+            true -> "Stop"
+            false -> "play"
+        }
         mStartPlaying = !mStartPlaying
     }
 
@@ -175,11 +137,18 @@ class MainActivity : AppCompatActivity() {
     private fun stopPlaying() {
         player?.release()
         player = null
-        mStartPlaying = !mStartPlaying
     }
+
+
+
+
 
     private fun startRecord() {
         onRecord(mStartRecording)
+        binding.buttonStartRecord.text = when (mStartRecording) {
+            true -> "Stop recording"
+            false -> "record"
+        }
         mStartRecording = !mStartRecording
     }
 
@@ -213,7 +182,51 @@ class MainActivity : AppCompatActivity() {
             release()
         }
         recorder = null
-        mStartRecording = !mStartRecording
     }
+
+
+    private fun requestPermissions() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            when {
+                //if user already granted the permission
+                ContextCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.RECORD_AUDIO
+                ) == PackageManager.PERMISSION_GRANTED -> {
+                    Toast.makeText(
+                        this,
+                        "you have already granted this permission",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+                //if user already denied the permission once
+                ActivityCompat.shouldShowRequestPermissionRationale(
+                    this,
+                    Manifest.permission.RECORD_AUDIO
+                ) -> {
+                }
+                else -> {
+                    requestPermissionLauncher.launch(
+                        Manifest.permission.RECORD_AUDIO
+                    )
+                }
+            }
+        }
+    }
+
+    //    override fun onRequestPermissionsResult(
+//        requestCode: Int,
+//        permissions: Array<String>,
+//        grantResults: IntArray
+//    ) {
+//        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+//        permissionToRecordAccepted = if (requestCode == REQUEST_RECORD_AUDIO_PERMISSION) {
+//            grantResults[0] == PackageManager.PERMISSION_GRANTED
+//        } else {
+//            false
+//        }
+//        if (!permissionToRecordAccepted) finish()
+//    }
+
 
 }

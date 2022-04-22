@@ -12,7 +12,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="92dp"
-
         android:background="@color/purple_200"
         android:minWidth="48dp"
         android:minHeight="48dp"
@@ -66,22 +65,24 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/buttonStartRecord"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="start"
-        app:layout_constraintBottom_toBottomOf="@+id/buttonStopRecord"
-        app:layout_constraintEnd_toStartOf="@+id/buttonStopRecord"
+        android:backgroundTint="@color/purple_600"
+        android:text="record"
+        app:layout_constraintBottom_toBottomOf="@+id/buttonPlayRecorded"
+        app:layout_constraintEnd_toStartOf="@+id/buttonPlayRecorded"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/buttonStopRecord" />
+        app:layout_constraintTop_toTopOf="@+id/buttonPlayRecorded" />
 
-    <Button
-        android:id="@+id/buttonStopRecord"
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/buttonPlayRecorded"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="60dp"
+        android:layout_marginTop="108dp"
+        android:backgroundTint="@color/purple_600"
         android:text="play"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
