@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">MediaPlayer</string>
-    <string name="url">https://dl.niyazmusic.ir/Golchin/Best/Clip/128/music-clip%201%20%28NiyazMusic%29%28128%29.mp3</string>
+    <string name="music1">https://dl.niyazmusic.ir/Golchin/Best/Clip/128/music-clip%201%20%28NiyazMusic%29%28128%29.mp3</string>
+    <string name="music2">https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3</string>
 </resources>
