@@ -28,13 +28,32 @@ class MainActivity : AppCompatActivity() {
     var isMusicPlaying = false
     lateinit var binding: ActivityMainBinding
     var mediaPlayer: MediaPlayer? = null
+    private var recorder: MediaRecorder? = null
+    private var fileName: String = ""
+    private var permissionToRecordAccepted = false
+    private var permissions: Array<String> = arrayOf(Manifest.permission.RECORD_AUDIO)
 
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        permissionToRecordAccepted = if (requestCode == REQUEST_RECORD_AUDIO_PERMISSION) {
+            grantResults[0] == PackageManager.PERMISSION_GRANTED
+        } else {
+            false
+        }
+        if (!permissionToRecordAccepted) finish()
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        fileName = "${externalCacheDir?.absolutePath}/audiorecordtest.3gp"
+        ActivityCompat.requestPermissions(this, permissions, REQUEST_RECORD_AUDIO_PERMISSION)
 
         initViews()
 
@@ -75,12 +94,50 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.buttonStartRecord.setOnClickListener {
-
+            startRecord()
         }
         binding.buttonStopRecord.setOnClickListener {
 
         }
     }
 
+    private fun startRecord() {
+        var mStartRecording = true
+        onRecord(mStartRecording)
+        mStartRecording = !mStartRecording
+
+    }
+
+
+    private fun onRecord(start: Boolean) = if (start) {
+        startRecording()
+    } else {
+        stopRecording()
+    }
+
+    private fun startRecording() {
+        recorder = MediaRecorder().apply {
+            setAudioSource(MediaRecorder.AudioSource.MIC)
+            setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP)
+            setOutputFile(fileName)
+            setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB)
+
+            try {
+                prepare()
+            } catch (e: IOException) {
+                Log.e(LOG_TAG, "prepare() failed")
+            }
+
+            start()
+        }
+    }
+
+    private fun stopRecording() {
+        recorder?.apply {
+            stop()
+            release()
+        }
+        recorder = null
+    }
 
 }
