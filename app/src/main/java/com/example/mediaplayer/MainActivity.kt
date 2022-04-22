@@ -19,6 +19,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.example.mediaplayer.databinding.ActivityMainBinding
+import com.google.android.material.snackbar.Snackbar
 import java.io.IOException
 
 private const val LOG_TAG = "AudioRecordTest"
@@ -26,26 +27,46 @@ private const val REQUEST_RECORD_AUDIO_PERMISSION = 200
 
 class MainActivity : AppCompatActivity() {
     var isMusicPlaying = false
+    var mStartRecording = true
+    private var player: MediaPlayer? = null
     lateinit var binding: ActivityMainBinding
     var mediaPlayer: MediaPlayer? = null
     private var recorder: MediaRecorder? = null
     private var fileName: String = ""
+    var mStartPlaying = true
     private var permissionToRecordAccepted = false
     private var permissions: Array<String> = arrayOf(Manifest.permission.RECORD_AUDIO)
-
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<String>,
-        grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        permissionToRecordAccepted = if (requestCode == REQUEST_RECORD_AUDIO_PERMISSION) {
-            grantResults[0] == PackageManager.PERMISSION_GRANTED
-        } else {
-            false
+    private val requestPermissionLauncher =
+        registerForActivityResult(
+            ActivityResultContracts.RequestPermission()
+        ) { isGranted: Boolean ->
+            if (isGranted) {
+                Toast.makeText(
+                    this,
+                    "you granted this permission",
+                    Toast.LENGTH_SHORT
+                ).show()
+            } else {
+                Toast.makeText(
+                    this,
+                    "you denied this permission",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
         }
-        if (!permissionToRecordAccepted) finish()
-    }
+//    override fun onRequestPermissionsResult(
+//        requestCode: Int,
+//        permissions: Array<String>,
+//        grantResults: IntArray
+//    ) {
+//        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+//        permissionToRecordAccepted = if (requestCode == REQUEST_RECORD_AUDIO_PERMISSION) {
+//            grantResults[0] == PackageManager.PERMISSION_GRANTED
+//        } else {
+//            false
+//        }
+//        if (!permissionToRecordAccepted) finish()
+//    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,11 +74,38 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         fileName = "${externalCacheDir?.absolutePath}/audiorecordtest.3gp"
-        ActivityCompat.requestPermissions(this, permissions, REQUEST_RECORD_AUDIO_PERMISSION)
-
+        requestPermissions()
         initViews()
 
+    }
 
+    private fun requestPermissions() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            when {
+                //if user already granted the permission
+                ContextCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.RECORD_AUDIO
+                ) == PackageManager.PERMISSION_GRANTED -> {
+                    Toast.makeText(
+                        this,
+                        "you have already granted this permission",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+                //if user already denied the permission once
+                ActivityCompat.shouldShowRequestPermissionRationale(
+                    this,
+                    Manifest.permission.RECORD_AUDIO
+                ) -> {
+                }
+                else -> {
+                    requestPermissionLauncher.launch(
+                        Manifest.permission.RECORD_AUDIO
+                    )
+                }
+            }
+        }
     }
 
     private fun initViews() {
@@ -97,12 +145,39 @@ class MainActivity : AppCompatActivity() {
             startRecord()
         }
         binding.buttonStopRecord.setOnClickListener {
-
+            startPlay()
         }
     }
 
+    private fun startPlay() {
+        onPlay(mStartPlaying)
+        mStartPlaying = !mStartPlaying
+    }
+
+    private fun onPlay(start: Boolean) = if (start) {
+        startPlaying()
+    } else {
+        stopPlaying()
+    }
+
+    private fun startPlaying() {
+        player = MediaPlayer().apply {
+            try {
+                setDataSource(fileName)
+                prepare()
+                start()
+            } catch (e: IOException) {
+                Log.e(LOG_TAG, "prepare() failed")
+            }
+        }
+    }
+
+    private fun stopPlaying() {
+        player?.release()
+        player = null
+    }
+
     private fun startRecord() {
-        var mStartRecording = true
         onRecord(mStartRecording)
         mStartRecording = !mStartRecording
 
