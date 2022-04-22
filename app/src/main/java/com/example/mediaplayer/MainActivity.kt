@@ -18,7 +18,7 @@ class MainActivity : AppCompatActivity() {
 
         binding.buttonPlay.setOnClickListener {
 
-            val url = "https://dl.niyazmusic.ir/Golchin/Best/Clip/128/music-clip%201%20%28NiyazMusic%29%28128%29.mp3"// your URL here
+            val url = getString(R.string.music1)// your URL here
              mediaPlayer = MediaPlayer().apply {
                 setAudioAttributes(
                     AudioAttributes.Builder()
