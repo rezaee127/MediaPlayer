@@ -7,6 +7,7 @@ import android.os.Bundle
 import com.example.mediaplayer.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
+    var isMusicPlaying=false
     lateinit var binding:ActivityMainBinding
      var  mediaPlayer: MediaPlayer?=null
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -29,6 +30,7 @@ class MainActivity : AppCompatActivity() {
                 prepare() // might take long! (for buffering, etc)
                 start()
             }
+            isMusicPlaying=true
         }
 
         binding.buttonStop.setOnClickListener {
@@ -37,7 +39,14 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.buttonPause.setOnClickListener {
-            mediaPlayer?.pause()
+            if(isMusicPlaying) {
+                mediaPlayer?.pause()
+                isMusicPlaying=false
+            }
+            else {
+                mediaPlayer?.start()
+                isMusicPlaying=true
+            }
         }
 
     }
